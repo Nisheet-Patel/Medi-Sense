@@ -242,25 +242,27 @@ const Diabetes = () => {
                         </div>
                     </div>
 
-                    {prediction && (
+                    {prediction !== null && (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className={`mb-6 p-4 rounded-lg border ${prediction === true
-                                    ? 'bg-red-50 border-red-200 text-red-800'
-                                    : 'bg-green-50 border-green-200 text-green-800'
+                            className={`mb-6 p-4 rounded-lg border ${prediction
+                                ? 'bg-red-50 border-red-200 text-red-800'
+                                : 'bg-green-50 border-green-200 text-green-800'
                                 }`}
                         >
                             <div className="flex items-center">
                                 <AlertCircle className="h-5 w-5 mr-2" />
                                 <span className="font-medium">
-                                    {prediction === true
+                                    {console.log(prediction)}
+                                    {prediction
                                         ? 'High risk of diabetes detected'
                                         : 'Low risk of diabetes detected'}
                                 </span>
                             </div>
                         </motion.div>
                     )}
+
 
                     <div className="pt-6 border-t flex justify-end">
                         <motion.button
