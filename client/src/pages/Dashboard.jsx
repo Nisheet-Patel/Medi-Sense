@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,19 @@ const Dashboard = () => {
         await axios.post("http://localhost:3000/logout", {}, { withCredentials: true });
         navigate("/login");
     };
+
+    useEffect(() => {
+        const verifyUser = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/dashboard", { withCredentials: true });
+            } catch (error) {
+                console.error("Authentication failed:", error);
+                navigate("/login");
+            }
+        };
+
+        verifyUser();
+    }, []);
 
     return (
         <div className="flex min-h-screen bg-custom">
