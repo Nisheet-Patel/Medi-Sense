@@ -115,7 +115,7 @@ const Diabetes = () => {
                         {/* Column 1 */}
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <User className="h-5 w-5 mr-2 text-blue-600" />
                                     Pregnancies
                                 </label>
@@ -131,7 +131,7 @@ const Diabetes = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <Droplet className="h-5 w-5 mr-2 text-blue-600" />
                                     Glucose (mg/dL)
                                 </label>
@@ -146,7 +146,7 @@ const Diabetes = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <HeartPulse className="h-5 w-5 mr-2 text-blue-600" />
                                     Blood Pressure (mmHg)
                                 </label>
@@ -161,7 +161,7 @@ const Diabetes = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <Ruler className="h-5 w-5 mr-2 text-blue-600" />
                                     Skin Thickness (mm)
                                 </label>
@@ -179,7 +179,7 @@ const Diabetes = () => {
                         {/* Column 2 */}
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className=" text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <Syringe className="h-5 w-5 mr-2 text-blue-600" />
                                     Insulin (μU/mL)
                                 </label>
@@ -194,7 +194,7 @@ const Diabetes = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className=" text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <Weight className="h-5 w-5 mr-2 text-blue-600" />
                                     BMI (kg/m²)
                                 </label>
@@ -210,7 +210,7 @@ const Diabetes = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className=" text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <ClipboardList className="h-5 w-5 mr-2 text-blue-600" />
                                     Diabetes Pedigree
                                 </label>
@@ -226,7 +226,7 @@ const Diabetes = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <label className=" text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     <Calendar className="h-5 w-5 mr-2 text-blue-600" />
                                     Age
                                 </label>
