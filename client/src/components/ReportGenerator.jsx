@@ -22,7 +22,6 @@ const ReportGenerator = ({ analysisData }) => {
     const [activeTab, setActiveTab] = useState(0);
 
     useEffect(() => {
-        // Simulate calculating tumor size based on analysis data
         if (analysisData) {
             setTimeout(() => {
                 const calculatedSize = analysisData.probability > 0.7
@@ -36,10 +35,7 @@ const ReportGenerator = ({ analysisData }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setPatientInfo(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setPatientInfo(prev => ({ ...prev, [name]: value }));
     };
 
     const generateReport = async () => {
@@ -83,10 +79,8 @@ const ReportGenerator = ({ analysisData }) => {
         }
     };
 
-    // Format probability as percentage
     const probabilityPercentage = analysisData ? Math.round(analysisData.probability * 100) : 0;
 
-    // Determine risk level
     const getRiskLevel = () => {
         if (probabilityPercentage > 75) return { level: 'High', color: 'text-red-600', bgColor: 'bg-red-50', borderColor: 'border-red-200' };
         if (probabilityPercentage > 40) return { level: 'Medium', color: 'text-orange-500', bgColor: 'bg-orange-50', borderColor: 'border-orange-200' };
@@ -372,9 +366,9 @@ const ReportGenerator = ({ analysisData }) => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="relative group bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                            <div className="relative group bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 w-full">
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-50/50 pointer-events-none rounded-xl" />
-                                
+
                                 {analysisData?.plot_3d ? (
                                     <Plot
                                         data={JSON.parse(analysisData.plot_3d).data}
@@ -386,18 +380,18 @@ const ReportGenerator = ({ analysisData }) => {
                                             plot_bgcolor: 'rgba(255,255,255,0.9)',
                                             scene: {
                                                 ...JSON.parse(analysisData.plot_3d).layout.scene,
-                                                xaxis: { 
-                                                    ...JSON.parse(analysisData.plot_3d).layout.scene.xaxis, 
+                                                xaxis: {
+                                                    ...JSON.parse(analysisData.plot_3d).layout.scene.xaxis,
                                                     gridcolor: "rgba(229, 231, 235, 0.5)",
                                                     backgroundcolor: 'rgba(255,255,255,0)'
                                                 },
-                                                yaxis: { 
-                                                    ...JSON.parse(analysisData.plot_3d).layout.scene.yaxis, 
+                                                yaxis: {
+                                                    ...JSON.parse(analysisData.plot_3d).layout.scene.yaxis,
                                                     gridcolor: "rgba(229, 231, 235, 0.5)",
                                                     backgroundcolor: 'rgba(255,255,255,0)'
                                                 },
-                                                zaxis: { 
-                                                    ...JSON.parse(analysisData.plot_3d).layout.scene.zaxis, 
+                                                zaxis: {
+                                                    ...JSON.parse(analysisData.plot_3d).layout.scene.zaxis,
                                                     gridcolor: "rgba(229, 231, 235, 0.5)",
                                                     backgroundcolor: 'rgba(255,255,255,0)'
                                                 },
@@ -407,13 +401,13 @@ const ReportGenerator = ({ analysisData }) => {
                                             }
                                         }}
                                         useResizeHandler={true}
-                                        style={{ 
-                                            width: '100%', 
+                                        style={{
+                                            width: '100%',
                                             height: '600px',
                                             minHeight: '400px',
                                             borderRadius: '0.75rem'
                                         }}
-                                        config={{ 
+                                        config={{
                                             responsive: true,
                                             displaylogo: false,
                                             modeBarButtonsToRemove: [

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file,Blueprint
+from flask import Flask, request, jsonify, send_file, Blueprint
 import numpy as np
 from PIL import Image
 import io
@@ -9,31 +9,34 @@ from sklearn.preprocessing import MinMaxScaler
 from scipy import ndimage
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
-from flask_cors import CORS
-import uuid
 from datetime import datetime
+import uuid
 
-# app = Flask(__name__)
-# CORS(app)
+# Flask Blueprint
+server = Blueprint('server', __name__)
 
-server = Blueprint('server',__name__)
-
+# Load the pre-trained model
 model = tf.keras.models.load_model('PKL/model.h5')
 
 @server.route('/analyze', methods=['POST'])
 def analyze_image():
+    # Get the uploaded image
     file = request.files['image']
     img = Image.open(file.stream)
     
+    # Preprocess the image for prediction
     img_array = np.array(img.resize((224, 224))) / 255.0
     prediction = model.predict(np.expand_dims(img_array, 0))[0][0]
     
+    # Process the image for visualization
     processed_img = load_and_preprocess(img)
     tumor_array, tumor_mask = extract_tumor(processed_img)
-    fig_3d = create_3d_plot(processed_img, tumor_mask)
     
+    # Create 3D plot
+    fig_3d = create_3d_plot(processed_img, tumor_mask)
     plot_json = fig_3d.to_json()
     
+    # Convert images to base64 for frontend
     img_base64 = image_to_base64(processed_img)
     tumor_base64 = image_to_base64(tumor_array)
     
@@ -48,6 +51,7 @@ def analyze_image():
 def generate_report():
     data = request.json
     try:
+        # Generate HTML report
         html_content = generate_html_report(
             data['patient_info'],
             data['tumor_info'],
@@ -65,12 +69,14 @@ def generate_report():
         return jsonify({'error': f'Missing key in request data: {str(e)}'}), 400
 
 def image_to_base64(img_array):
+    """Convert a numpy array to a base64-encoded image."""
     img = Image.fromarray((img_array * 255).astype(np.uint8))
     buffered = io.BytesIO()
     img.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
 def load_and_preprocess(image):
+    """Preprocess the image for analysis."""
     img_array = np.array(image.convert('L'))
     img_array = ndimage.gaussian_filter(img_array, sigma=1.5)
     p2, p98 = np.percentile(img_array, (2, 98))
@@ -80,16 +86,19 @@ def load_and_preprocess(image):
     return img_array
 
 def extract_tumor(img_array, threshold=0.6):
+    """Extract tumor regions from the image."""
     tumor_mask = img_array > threshold
     tumor_array = np.zeros_like(img_array)
     tumor_array[tumor_mask] = img_array[tumor_mask]
     return tumor_array, tumor_mask
 
 def create_3d_plot(img_array, tumor_mask):
+    """Create a 3D plot of the MRI scan with tumor highlighted."""
     x = np.arange(0, img_array.shape[1], 1)
     y = np.arange(0, img_array.shape[0], 1)
     x, y = np.meshgrid(x, y)
     img_array_colored = np.where(tumor_mask, img_array * 1.5, img_array)
+    
     fig = go.Figure(data=[go.Surface(z=img_array_colored, x=x, y=y, colorscale='plasma')])
     fig.update_layout(
         title='3D MRI Scan Visualization with Tumor Highlighted',
@@ -97,15 +106,16 @@ def create_3d_plot(img_array, tumor_mask):
             xaxis_title='X (pixels)', 
             yaxis_title='Y (pixels)', 
             zaxis_title='Intensity',
-            bgcolor='rgb(240, 240, 240)'
+            bgcolor='rgb(240, 240, 240)',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=0.8))
         ),
-        width=800, 
-        height=700, 
-        margin=dict(l=65, r=50, b=65, t=90)
+        margin=dict(l=20, r=20, b=20, t=40),
+        autosize=True
     )
     return fig
 
 def generate_html_report(patient_info, tumor_info, original_b64, tumor_b64, plot_3d_json):
+    """Generate an HTML report using Jinja2 templating."""
     # Decode images from base64
     original_img = Image.open(io.BytesIO(base64.b64decode(original_b64)))
     tumor_img = Image.open(io.BytesIO(base64.b64decode(tumor_b64)))
@@ -126,17 +136,16 @@ def generate_html_report(patient_info, tumor_info, original_b64, tumor_b64, plot
     img_buffer.seek(0)
     img_base64 = base64.b64encode(img_buffer.getvalue()).decode()
 
-    # Current date for the report
+    # Current date and report ID
     current_date = datetime.now().strftime("%B %d, %Y")
     report_id = f"MRI-{str(uuid.uuid4())[:8].upper()}"
     
     # Format probability for display
     probability_percentage = f"{(tumor_info['probability'] * 100):.1f}%"
     
-    # Determine severity level based on probability
+    # Determine severity level
     severity = "Low"
     severity_color = "#057a55"  # Green
-    
     if tumor_info['probability'] > 0.7:
         severity = "High"
         severity_color = "#c81e1e"  # Red
@@ -144,7 +153,7 @@ def generate_html_report(patient_info, tumor_info, original_b64, tumor_b64, plot
         severity = "Medium"
         severity_color = "#c27803"  # Amber
     
-    # Prepare template with Tailwind CSS
+    # Render HTML template
     template = jinja2.Template("""
     <!DOCTYPE html>
     <html lang="en">
@@ -154,47 +163,10 @@ def generate_html_report(patient_info, tumor_info, original_b64, tumor_b64, plot
         <title>Neurological Assessment Report</title>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: {
-                                50: '#f0f9ff',
-                                100: '#e0f2fe',
-                                200: '#bae6fd',
-                                300: '#7dd3fc',
-                                400: '#38bdf8',
-                                500: '#0ea5e9',
-                                600: '#0284c7',
-                                700: '#0369a1',
-                                800: '#075985',
-                                900: '#0c4a6e',
-                            }
-                        }
-                    }
-                }
-            }
-        </script>
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-            body {
-                font-family: 'Inter', sans-serif;
-            }
-            .plotly-graph-div {
-                min-height: 500px;
-            }
-            @page {
-                size: A4;
-                margin: 0;
-            }
-            @media print {
-                body {
-                    -webkit-print-color-adjust: exact;
-                    print-color-adjust: exact;
-                }
-            }
+            body { font-family: 'Inter', sans-serif; }
+            .plotly-graph-div { width: 100%; height: 100%; }
         </style>
     </head>
     <body class="bg-gray-50">
@@ -415,7 +387,6 @@ def generate_html_report(patient_info, tumor_info, original_b64, tumor_b64, plot
     </body>
     </html>
     """)
-
     return template.render(
         patient_info=patient_info,
         tumor_info=tumor_info,
