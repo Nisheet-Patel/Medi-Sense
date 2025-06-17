@@ -122,5 +122,5 @@ npm install
 <a href="https://github.com/virtualharsh/">Harsh</a>  <br>
 <a href="https://github.com/jayjoshi2512/">Jay</a> <br>
 <a href="https://github.com/">Krish</a> <br>
-<a href="https://github.com/Nisheet-Patel/">Nishit</a> <br>
+<a href="https://github.com/Nisheet-Patel/">Nisheet</a> <br>
 </ >
